@@ -17,18 +17,18 @@ jobs:
     - name: Configurar Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.21'  # Use a versão do Go compatível com o seu projeto; ajuste se necessário
+        go-version: '1.21'
 
-    - name: Rodar testes
+    - name: Rodar testes com cobertura
       run: |
-        go test -v ./...
-        # Isso roda todos os testes no projeto com verbose output
-        # Se algum teste falhar, o job falha automaticamente
+        go test -v -coverprofile=coverage.out ./...
+        go tool cover -func=coverage.out | tee result.log
 
-    # Opcional: Cobertura de testes (se quiser adicionar)
-    # - name: Rodar testes com cobertura
-    #   run: go test -v -coverprofile=coverage.out ./...
-    # - name: Upload cobertura para Codecov (exemplo)
-    #   uses: codecov/codecov-action@v3
-    #   with:
-    #     file: ./coverage.out
+    - name: Upload de relatório HTML
+      run: go tool cover -html=coverage.out -o coverage.html
+
+    - name: Upload artefato de cobertura
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage.html
