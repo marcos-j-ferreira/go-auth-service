@@ -1,0 +1,34 @@
+name: CI - Testes Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Configurar Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'  # Use a versão do Go compatível com o seu projeto; ajuste se necessário
+
+    - name: Rodar testes
+      run: |
+        go test -v ./...
+        # Isso roda todos os testes no projeto com verbose output
+        # Se algum teste falhar, o job falha automaticamente
+
+    # Opcional: Cobertura de testes (se quiser adicionar)
+    # - name: Rodar testes com cobertura
+    #   run: go test -v -coverprofile=coverage.out ./...
+    # - name: Upload cobertura para Codecov (exemplo)
+    #   uses: codecov/codecov-action@v3
+    #   with:
+    #     file: ./coverage.out
